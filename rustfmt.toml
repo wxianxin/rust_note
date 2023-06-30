@@ -1,0 +1,18 @@
+# Sets the maximum width of each line
+max_width = 88
+
+# Enforces trailing commas for multiline lists and structures. This helps make diffs cleaner.
+trailing_comma = "Always"
+
+# Formats code where necessary to fit within max_width.
+wrap_comments = true
+
+# Uses visual indentation (as opposed to block indentation)
+indent_style = "Visual"
+
+# Sort the import statements
+imports_granularity = "Crate"
+
+# If the function has more than one parameter, force vertical parameter layout
+fn_args_layout = "Vertical"
+

@@ -12,23 +12,17 @@ use std::time::Duration;
 
 fn main() {
     println!("Hello, world!"); // println is macro (with "!")
-                               // Fundamentally, macros are a way of writing code that writes other code, which is known as metaprogramming.
-                               // Macros are executed at compile time. They generally expand into new pieces of code that the compiler will then need to further process.
-    println!("What's your name?");
-    // Declare variables: Variables are bound to values using 'let'
-    let mut name = String::new(); // in rust by default the variables defined are immutable
-    let greeting = "Nice to meet you.";
-    io::stdin()
-        .read_line(&mut name)
-        .expect("Didn't Receive Input.");
-    println!("Hello {}! {}", name.trim_end(), greeting);
-
-    //----------------------------------------------------------------------------------
+                               // Fundamentally, macros are a way of writing code that
+                               // writes other code, which is known as metaprogramming.
+                               // Macros are executed at compile time. They generally
+                               // expand into new pieces of code that the compiler will
+                               // then need to further process.
 
     const ONE_BIL: u32 = 1_000_000_000; // naming convention: all cap with underscore
     const PI: f32 = 3.1415926;
     let age = "30";
-    // shadowing: define variables with the same name
+    // shadowing: define variable with the same name, essentially reassign the variable
+    // name to a new variable.
     let mut age: u32 = age.trim().parse().expect("Age wasn't assigned a number");
     age = age + 1;
     println!("I'm {} and I want ${}", age, ONE_BIL);
@@ -65,6 +59,11 @@ fn main() {
     println!("random integer from 1 - 100: {}", random_num);
 
     //----------------------------------------------------------------------------------
+    // logic operator
+    // &&   // logical AND
+    // ||   // logical OR
+    // !    // logical NOT
+    //----------------------------------------------------------------------------------
     // control flow
     let age: i32 = 30;
     if (age >= 1) && (age <= 18) {
@@ -77,8 +76,10 @@ fn main() {
 
     // ternary operator
     let mut my_age = 18;
-    let can_vote = if my_age >= 18 { true } else { false }; // no ':' after 'true' because this is
-                                                            // an assignment instead of statement
+    let can_vote = if my_age >= 18 { true } else { false }; // no ':' after 'true'
+                                                            // because this is an
+                                                            // assignment instead of
+                                                            // statement
     println!("Can Vote: {}", can_vote);
 
     // match; use scrutinee expression (use a value to compare to the patterns) each arm has a pattern and some code. use "=>" to separate
@@ -162,6 +163,7 @@ fn main() {
     // string literals: Embedeed into the compile binary, have type &str
 
     let mut s = String::from("a few \n lines");
+    let s = "a few \n lines"; // "a few \n lines" here is static and immutable
     let mut sl = "hello\nworld!"; // This is a string slice from a string literal
     let upper = s.to_uppercase();
     let stripped = upper.strip_prefix("HELLO");
@@ -202,6 +204,18 @@ fn main() {
         println!("{}", char); // print unicode
     }
 
+    //---------------------------------------------------------------------------------
+    // stdin
+    println!("What's your name?");
+    // Declare variables: Variables are bound to values using 'let'
+    let mut name = String::new(); // in rust by default the variables defined are immutable
+    let greeting = "Nice to meet you.";
+    io::stdin()
+        .read_line(&mut name)
+        .expect("Didn't Receive Input.");
+    println!("Hello {}! {}", name.trim_end(), greeting);
+
+    //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
     /* collections
         Vec<T>          // Access by index
@@ -221,7 +235,11 @@ fn main() {
     let int3_u32: u32 = (int_u8 as u32) + (int2_u8 as u32);
 
     //----------------------------------------------------------------------------------
-    // enum: similar to structs, but with more flexibility and advantages
+    // struct vs. enum
+    //  Use a struct when you want to aggregate several values together.
+    //  Use an enum when you want to describe a type that can be one of a few different kinds of values.
+    //----------------------------------------------------------------------------------
+    // enum or enumeration is a data type that allows you to define a type by enumerating its possible variants. Each variant can optionally have data associated with it.
     enum WebEvent {
         PageLoad,
         PageUnload,
@@ -242,44 +260,51 @@ fn main() {
     */
     let soemthing = Some(1); // do not need to bring into scope intentionally
 
-    enum Day {
-        Monday,
-        Tuesday,
-        Wednesday,
-        Thursday,
-        Friday,
-        Saturday,
-        Sunday,
+    enum Direction {
+        North,
+        South,
+        East,
+        West,
     }
 
-    impl Day {
-        fn is_weekend(&self) -> bool {
+    let dir = Direction::North;
+
+    // In this example, Direction is an enum with four variants. You can use the :: syntax to specify a particular variant of the enum.
+    match dir {
+        Direction::North => println!("We are heading north!"),
+        Direction::South => println!("We are heading south!"),
+        Direction::East => println!("We are heading east!"),
+        Direction::West => println!("We are heading west!"),
+    }
+
+    // example 2
+    enum Shape {
+        Circle(f64),
+        Rectangle(f64, f64),
+    }
+
+    impl Shape {
+        fn area(&self) -> f64 {
             match self {
-                Day::Saturday | Day::Sunday => true,
-                _ => false,
+                Shape::Circle(radius) => std::f64::consts::PI * radius * radius,
+                Shape::Rectangle(width, height) => width * height,
             }
         }
     }
 
-    let today: Day = Day::Friday; // use enum as datatype
-    match today {
-        Day::Monday => println!("Everyone hates Monday"),
-        Day::Tuesday => println!("Donut day"),
-        Day::Wednesday => println!("Hump day"),
-        Day::Thursday => println!("Pay day"),
-        Day::Friday => println!("Almost Weekend"),
-        Day::Saturday => println!("Weekend!!!"),
-        Day::Sunday => println!("Weekend!!!"),
-    }
+    let circle = Shape::Circle(10.0);
+    println!("The area of the circle is {}", circle.area());
 
-    println!("Is today the weekend ? {}", today.is_weekend());
+    let rectangle = Shape::Rectangle(10.0, 5.0);
+    println!("The area of the rectangle is {}", rectangle.area());
 
     //----------------------------------------------------------------------------------
-    // vector: like arrays but with variable size if mut, only store same type of data
-    let vec1: Vec<i32> = Vec::new();
+    // Arrays in Rust have a fixed size, which must be known at compile time.
+    // Vectors are similar to arrays, but they can grow and shrink at runtime.
+    let vec1: Vec<i32> = Vec::new(); // define a new Vec
     let mut vec2 = vec![1, 2, 3, 4];
     println!("{:?}", vec2);
-    vec2.push(5);
+    vec2.push(5); // add element to Vec
     println!("1st: {}", vec2[0]);
     let second: &i32 = &vec2[1];
     // TODO start
@@ -301,8 +326,9 @@ fn main() {
 
     //----------------------------------------------------------------------------------
     // function
-    // if function has no return, then the return type is unit
-    // "return" is optional, last value is returned
+    // In Rust, if a function doesn't have an explicit return statement, it implicitly returns the unit type, (). The unit type in Rust is similar to void in C/C++ or None in Python, it essentially represents "nothing" or "no value".
+    // "return" is optional, last value is returned.
+    // You can define functions before or after main
     say_hello();
     get_sum(2, 3);
     println!("{}", get_sum(3, 4));
@@ -321,8 +347,8 @@ fn main() {
     //----------------------------------------------------------------------------------
     // Ownership
     // stack: LIFO with a defined fixed size
-    // heap: When putting data on the heap you request a certain amount of space. The OS finds
-    // space available and returns an address for that space called a pointer.
+    // heap: When putting data on the heap you request a certain amount of space. The OS
+    // finds space available and returns an address for that space called a pointer.
     // eg.
     let mut my_int: i32 = 1; // The variable and value are stored on a stack
     let mut my_vec: Vec<i32> = vec![1, 2, 3]; // The variable and pointer are stored on a stack, the pointer points to the heap where the values are stored
@@ -343,10 +369,15 @@ fn main() {
     // main scope str3 is no longer valid
     //----------------------------------------------------------------------------------
     // borrowing
+    // An immutable reference (&T) allows you to borrow a value for reading, but not for writing. You can have multiple immutable references to a value at the same time.
+    // A mutable reference (&mut T) allows you to borrow a value for reading and writing. You can only have one mutable reference to a specific value in a particular scope.
+    // In Rust, borrowing and referencing are closely related concepts. They are different aspects of the same feature of the language.
+    // References: The mechanism for pointing to a value without taking ownership. You create a reference by using the & symbol. A reference doesn't own the value it points to. There are two types of references in Rust, &T and &mut T, where T is any type. The first one, &T, is an immutable reference, meaning you cannot change the value through that reference. The second one, &mut T, is a mutable reference, which lets you change the value it points to.
+    // Borrowing: This is the act of taking a reference to a value. When you take a reference, you are "borrowing" the value. You can either take an immutable borrow, or a mutable borrow. Borrowing allows you to use a value in different parts of your code without transferring ownership. This is important in Rust because the language enforces strict ownership and borrowing rules at compile time to prevent issues like use-after-free, null pointer dereferencing, and data races.
     let str5 = String::from("World");
     print_reference_str(&str5);
     // println!("str4 = {}", str4);
-    println!("str5 = {}", str5); // now it works
+    println!("str5 = {}", str5); // NOTE: now it works
     let mut str6 = String::from("new world");
     change_string(&mut str6);
 
@@ -410,21 +441,30 @@ fn main() {
     bob.address = String::from("345 Main St.");
 
     struct Rectangle<T, U> {
+        // The T and U in the definition are placeholders for
+        // generic types.
         length: T,
         height: U,
     }
     let rec = Rectangle {
         length: 4,
-        height: 5,
+        height: 5.2,
     };
     //----------------------------------------------------------------------------------
     // trait
-    // Unlike trading OOP language, where data and behavior(methods) are within an object
-    // In Rust, data is kept in Enum/Struct, bahavior is kept separately in Trait.
+    // Unlike traditional OOP language, where data and behavior(methods) are defined within an object
+    // In Rust, data is kept in Struct/Enum, bahavior is kept separately in Trait.
     // In this way, you can mix and match the data and trait
-    let person = Person{name: String::from("Ss")};
-    let cat = Cat{name: String::from("Cc")};
-    let rabbit = Rabbit{name: String::from("Rr")};
+    // Rust encourages a data-oriented design and the use of composition over inheritance.
+    let person = Person {
+        name: String::from("Ss"),
+    };
+    let cat = Cat {
+        name: String::from("Cc"),
+    };
+    let rabbit = Rabbit {
+        name: String::from("Rr"),
+    };
     person.eat_dinner();
     cat.eat_dinner();
     rabbit.eat_dinner();
@@ -502,7 +542,8 @@ fn main() {
 
     //----------------------------------------------------------------------------------
     // iterator
-    // An iterator cycles through values by borrowing, so the collection is not moved (You can't change values)
+    // An iterator cycles through values by borrowing, so the collection is not moved
+    // (You can't change values)
     let mut arr_it = [1, 2, 3, 4];
     for val in arr_it.iter() {
         println!("{}", val);
@@ -513,7 +554,8 @@ fn main() {
 
     //----------------------------------------------------------------------------------
     // closure
-    // A closure is a function without a name and they are sometimes stored in a variable (They can be used to pass a function into another function)
+    // A closure is a function without a name and they are sometimes stored in a
+    // variable (They can be used to pass a function into another function)
     // let var_name = |parameters| -> return_type {BODY}
     let can_vote = |age: i32| age >= 18;
     println!("Can vote : {}", can_vote(8));
@@ -532,7 +574,11 @@ fn main() {
     println!("samp1 = {}", samp1);
 
     // You can pass closures to functions
-    fn use_func<T>(a: i32, b: i32, func: T) -> i32
+    fn use_func<T>(
+        a: i32,
+        b: i32,
+        func: T,
+    ) -> i32
     // you can define function within main
     where
         T: Fn(i32, i32) -> i32,
@@ -605,12 +651,18 @@ fn main() {
             }
         }
 
-        pub fn left(mut self, node: TreeNode<T>) -> Self {
+        pub fn left(
+            mut self,
+            node: TreeNode<T>,
+        ) -> Self {
             self.left = Some(Box::new(node));
             self
         }
 
-        pub fn right(mut self, node: TreeNode<T>) -> Self {
+        pub fn right(
+            mut self,
+            node: TreeNode<T>,
+        ) -> Self {
             self.right = Some(Box::new(node));
             self
         }
@@ -658,7 +710,10 @@ fn main() {
     // Mutex blocks threads waiting for lock to be available
     use std::sync::{Arc, Mutex};
 
-    fn withdraw(the_bank: &Arc<Mutex<Bank>>, amt: f32) {
+    fn withdraw(
+        the_bank: &Arc<Mutex<Bank>>,
+        amt: f32,
+    ) {
         let mut bank_ref = the_bank.lock().unwrap();
 
         if bank_ref.balance < 5.00 {
@@ -703,12 +758,18 @@ fn say_hello() {
     println!("Hello World!");
 }
 
-fn get_sum(x: i32, y: i32) -> i32 {
+fn get_sum(
+    x: i32,
+    y: i32,
+) -> i32 {
     println!("{} + {} = {}", x, y, x + y);
-    x + y // no ";", statement doesn't evaluate to function?
+    x + y // In Rust, if you omit the semicolon at the end of the last expression in a function, that expression is treated as the return value. This is a feature of "expression-based" languages like Rust
 }
 
-fn get_sum2(x: i32, y: i32) -> i32 {
+fn get_sum2(
+    x: i32,
+    y: i32,
+) -> i32 {
     println!("{} + {} = {}", x, y, x + y);
     return x + y; // or use return
 }
@@ -727,10 +788,15 @@ fn sum_list(my_list: &[i32]) -> i32 {
 
 //----------------------------------------------------------------------------------
 // generic
+// In Rust, generics are abstract stand-ins for concrete types or other properties. They allow for writing code that is flexible and avoids duplication, yet still type safe.
+// For example, you might want a function to work on different types of data. Instead of writing separate functions for each type, you can write a single function that takes a generic type parameter.
 
 use std::ops::Add;
 
-fn get_sum_gen<T: Add<Output = T>>(x: T, y: T) -> T {
+fn get_sum_gen<T: Add<Output = T>>(
+    x: T,
+    y: T,
+) -> T {
     // it doesn't have be "T" here, can be anything
     return x + y;
 }
@@ -753,13 +819,13 @@ fn add_to_vec(my_vec: &mut Vec<i32>) {
 // Trait
 
 pub struct Person {
-    name: String
+    name: String,
 }
 pub struct Cat {
-    name: String
+    name: String,
 }
 pub struct Rabbit {
-    name: String
+    name: String,
 }
 pub trait Eat {
     fn eat_dinner(&self) {
