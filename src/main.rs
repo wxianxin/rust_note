@@ -2,8 +2,6 @@
 #![allow(unused)] // suppress warnings for unused variables
 
 use rand::Rng;
-use std::cmp::Ordering;
-use std::collections::HashMap;
 use std::fs::File;
 use std::io;
 use std::io::{BufRead, BufReader, ErrorKind, Write};
@@ -96,9 +94,9 @@ fn main() {
     let my_age = 19;
     let voting_age = 18;
     match my_age.cmp(&voting_age) {
-        Ordering::Less => println!("Can't Vote"),
-        Ordering::Greater => println!("Can Vote"),
-        Ordering::Equal => println!("You gained the right to vote."),
+        std::cmp::Ordering::Less => println!("Can't Vote"),
+        std::cmp::Ordering::Greater => println!("Can Vote"),
+        std::cmp::Ordering::Equal => println!("You gained the right to vote."),
     };
 
     //----------------------------------------------------------------------------------
@@ -107,8 +105,6 @@ fn main() {
     let arr_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     println!("1st: {}", arr_1[0]);
     println!("Length : {}", arr_1.len());
-
-    let mut loop_idx = 0;
 
     //----------------------------------------------------------------------------------
     // tuple: contain multiple datatypes in a list of a fixed size
@@ -124,11 +120,13 @@ fn main() {
     let sth = loop {
         i *= 2;
         if i > 100 {
-            break i; // return from loop, put the value after "break"
+            break i; // return i from loop (put the value after `break`)
         }
     };
+    // Rust loops don't have a return value unless you're using a loop expression (e.g., `let val = loop { ... }`).
     assert_eq!(sth, 128);
 
+    let mut loop_idx = 0;
     loop {
         if arr_1[loop_idx] % 2 == 0 {
             loop_idx += 1;
@@ -154,10 +152,10 @@ fn main() {
     }
 
     //----------------------------------------------------------------------------------
+    // Rust's String is a wrapper over a `Vec<u8>`.
     // string: UTF-8, Non-Null-Byte Terminated, Not collections of chars
     // 2 types of string:
-    //      String -> called owned string, owns string data, data freed when dropped, vector of bytes that can be changed
-    //          3 parts of a String: 1. length 2. Capacity (memory already reserved) 3.Data pointer
+    //      String -> called owned string, owns string data, data freed when dropped, vector of bytes that can be changed. 3 parts of a String: 1. length 2.Data pointer 3. Capacity (memory already reserved)
     //      &str -> a borrowed string slice, does not own string data, data not freed when dropped, point to the string and allow for viewing
     //      2 parts of &str: 1. length 2. Data pointer
     // string literals: Embedeed into the compile binary, have type &str
@@ -220,7 +218,7 @@ fn main() {
     /* collections
         Vec<T>          // Access by index
                         // 3 parts: 1. length 2. capacity 3. pointer to the data
-        HashMap<K,V>    // Associate keys and values
+        std::collections::HashMap<K,V>    // Associate keys and values
         HashSet<T>      // Unique items & no access by index
         VecDeque<T>     // efficiently add/remove from both the front and back(Vec is only about the end); Good for a queue
         LinkedList<T>   // less often used in Rust
@@ -252,6 +250,10 @@ fn main() {
 
     /*
     option enum, defined in std library
+    The Option enum in Rust is a way of handling optional values without having to rely on error-prone conventions like returning a special value (such as -1 or null). It's a safer way of dealing with the absence of a value, which is a common occurrence in programming.
+    Option is an enum that has two variants: Some and None.
+        Some(T): An element of type T is present
+        None: No element is present
     NOTE Rust does not have the concept of null values, but it has enum to encode whether a value being null or not null
     enum Option<T> {    // "T" is a generic assocaite with some type
         Some(T),
@@ -302,8 +304,10 @@ fn main() {
     // Arrays in Rust have a fixed size, which must be known at compile time.
     // Vectors are similar to arrays, but they can grow and shrink at runtime.
     let vec1: Vec<i32> = Vec::new(); // define a new Vec
-    let mut vec2 = vec![1, 2, 3, 4];
-    println!("{:?}", vec2);
+    let mut vec2 = vec![1, 2, 3, 4]; // similar to array literals in other languages.
+    let v = vec![0; 10]; // This creates a new vector v with ten elements, all of them set to 0.
+    let v2 = v.clone(); // create a copy of a vector
+    println!("{:?}", vec2); // To display a Vec in Rust, you can simply print it using the println! macro with the {:?} formatter. The {:?} formatter is used for debug formatting, and Vec implements the Debug trait, so it can be printed this way.
     vec2.push(5); // add element to Vec
     println!("1st: {}", vec2[0]);
     let second: &i32 = &vec2[1];
@@ -369,8 +373,10 @@ fn main() {
     // main scope str3 is no longer valid
     //----------------------------------------------------------------------------------
     // borrowing
+    // There are two kinds of borrows: mutable and immutable.
     // An immutable reference (&T) allows you to borrow a value for reading, but not for writing. You can have multiple immutable references to a value at the same time.
     // A mutable reference (&mut T) allows you to borrow a value for reading and writing. You can only have one mutable reference to a specific value in a particular scope.
+    // Rust enforces a rule that says you cannot have a mutable reference while you have an immutable one, because users of an immutable reference don't expect the values to suddenly change out from under them!
     // In Rust, borrowing and referencing are closely related concepts. They are different aspects of the same feature of the language.
     // References: The mechanism for pointing to a value without taking ownership. You create a reference by using the & symbol. A reference doesn't own the value it points to. There are two types of references in Rust, &T and &mut T, where T is any type. The first one, &T, is an immutable reference, meaning you cannot change the value through that reference. The second one, &mut T, is a mutable reference, which lets you change the value it points to.
     // Borrowing: This is the act of taking a reference to a value. When you take a reference, you are "borrowing" the value. You can either take an immutable borrow, or a mutable borrow. Borrowing allows you to use a value in different parts of your code without transferring ownership. This is important in Rust because the language enforces strict ownership and borrowing rules at compile time to prevent issues like use-after-free, null pointer dereferencing, and data races.
@@ -399,7 +405,7 @@ fn main() {
 
     //----------------------------------------------------------------------------------
     // hashmap
-    let mut heroes = HashMap::new();
+    let mut heroes = std::collections::HashMap::new();
     heroes.insert("Superman", "Clark Kent");
     heroes.insert("Batman", "Bruce Wayne");
     heroes.insert("Flash", "Barry Allen");
@@ -554,7 +560,7 @@ fn main() {
 
     //----------------------------------------------------------------------------------
     // closure
-    // A closure is a function without a name and they are sometimes stored in a
+    // A closure is anonymous function and it is sometimes stored in a
     // variable (They can be used to pass a function into another function)
     // let var_name = |parameters| -> return_type {BODY}
     let can_vote = |age: i32| age >= 18;
@@ -594,6 +600,7 @@ fn main() {
 
     //----------------------------------------------------------------------------------
     // SMART POINTERS
+    // The main difference between normal pointers and smart pointers is that smart pointers have additional functionalities, like automatic cleanup (deallocation of heap memory) or dereferencing capabilities.
     // A pointer is an address to a location in memory. We have been
     // using them when we used the reference operator(&) to borrow
     // a value.
@@ -607,12 +614,9 @@ fn main() {
 
     //----------------------------------------------------------------------------------
     // BOX
-
-    // The Box smart pointer stores data on the heap instead of the stack.
+    // The Box<T> is the simplest form of smart pointer. It allows you to store data on the heap rather than the stack, and the box will be deallocated when it goes out of scope, freeing the memory.
     // All values are stored on the stack by default
 
-    // A Box is normally used when you have a large amount of data stored
-    // on the heap and then you pass pointers to it on the stack.
     let b_int1 = Box::new(10);
     println!("b_int1 = {}", b_int1);
 
