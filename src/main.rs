@@ -15,6 +15,10 @@ fn main() {
                                // Macros are executed at compile time. They generally
                                // expand into new pieces of code that the compiler will
                                // then need to further process.
+    println!("{}", "Hello there!"); // same as the following block
+
+    use std::io::{self, Write}; // same as above
+    io::stdout().lock().write_all(b"Hello there!\n").unwrap();                                
 
     const ONE_BIL: u32 = 1_000_000_000; // naming convention: all cap with underscore
     const PI: f32 = 3.1415926;
@@ -234,6 +238,7 @@ fn main() {
 
     //----------------------------------------------------------------------------------
     // struct vs. enum
+    // think struct as a new type that you defined
     //  Use a struct when you want to aggregate several values together.
     //  Use an enum when you want to describe a type that can be one of a few different kinds of values.
     //----------------------------------------------------------------------------------
@@ -494,6 +499,7 @@ fn main() {
     */
 
     /* Result num, principally used for input/output operation where failture is expected
+     * Values of the Result type, like values of any type, have methods defined on them. An instance of Result has an expect method that you can call. If this instance of Result is an Err value, expect will cause the program to crash and display the message that you passed as an argument to expect. If the read_line method returns an Err, it would likely be the result of an error coming from the underlying operating system. If this instance of Result is an Ok value, expect will take the return value that Ok is holding and return just that value to you so you can use it.
     enum Result<T, E> { // both T,E are generics
         Ok(T),  // represents success and contains a value
         Err(E), // represents an error
@@ -847,3 +853,51 @@ impl Eat for Cat {
     }
 }
 impl Eat for Rabbit {}
+
+// 20231216
+// https://fasterthanli.me/articles/a-half-hour-to-learn-rust
+// expression will be evaluated to a value
+// Blocks "{}" are also expressions
+// if clause is an expression
+// match is an expression, not a statement
+let least = std::cmp::min(3, 8) // In this example, std is a crate (~ a library), cmp is a module (~ a source file), and min is a function
+// use directives can be used to "bring in scope" names from other namespace
+// this works:
+use std::cmp::min;
+use std::cmp::max;
+//Within use directives, curly brackets have another meaning: they're "globs". 
+// this also works:
+use std::cmp::{min, max};
+// this also works!
+use std::{cmp::min, cmp::max};
+// Types are namespaces too, and methods can be called as regular functions
+// vec uses heap allocated array, in run time when the array runs out, it swaps for a larger array
+// when it reaches full capacity
+
+// tuple
+let pair = ('a', 17);
+pair.0; // this is 'a'
+pair.1; // this is 17
+
+// There is a shortcut for initializing the rest of the fields from another struct
+// struct update syntax: can only happen in last position, and cannot be followed by a comma.
+let v3 = Vec2 {
+    x: 14.0,
+    ..v2
+};
+// Traits are something multiple types can have in common
+// Definition: A trait in Rust is a collection of methods defined for an unknown type: Self. Traits can include readable and writable properties, methods, and other traits.
+// Implementations: Traits are implemented by data types (like structs or enums). A single type can implement many traits, and a trait can be implemented by many types.
+trait Signed {
+    fn is_strictly_negative(self) -> bool;
+}
+
+//You can implement:
+//
+//    one of your traits on anyone's type
+//    anyone's trait on one of your types
+//    but not a foreign trait on a foreign type
+
+// In Rust, a type refers to the kind of data that a value can hold. This includes primitive types (like i32, f64, bool), compound types (like tuples), user-defined types (like structs and enums), and more complex types (like closures and function pointers).
+// Rust prefers composition over inheritance and uses traits to share behavior between different structs.
+// An impl block is always for a type, so, inside that block, `Self` means that type
