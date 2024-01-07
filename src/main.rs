@@ -901,3 +901,41 @@ trait Signed {
 // In Rust, a type refers to the kind of data that a value can hold. This includes primitive types (like i32, f64, bool), compound types (like tuples), user-defined types (like structs and enums), and more complex types (like closures and function pointers).
 // Rust prefers composition over inheritance and uses traits to share behavior between different structs.
 // An impl block is always for a type, so, inside that block, `Self` means that type
+//
+// if is an expression
+/
+// chapter 4
+// stack: LIFO, All data stored on the stack must have a known, fixed size. 
+// All data stored on the stack must have a known, fixed size.
+// heap: The memory allocator finds an empty spot in the heap that is big enough, marks it as being in use, and returns a pointer, which is the address of that location. This process is called allocating on the heap and is sometimes abbreviated as just allocating (pushing values onto the stack is not considered allocating). Because the pointer to the heap is a known, fixed size, you can store the pointer on the stack
+// Pushing to the stack is faster than allocating on the heap because the allocator never has to
+// search for a place to store new data; that location is always at the top of the stack.
+
+// 4.2 References and Borrowing
+// At any given time, you can have either one mutable reference or any number of immutable references.
+// References must always be valid.
+// Mutable references have one big restriction: if you have a mutable reference to a value, you can have no other references to that value.
+// We also cannot have a mutable reference while we have an immutable one to the same value.
+// Note that a reference’s scope starts from where it is introduced and continues through the last time that reference is used.
+
+// 4.3 The Slice Type 
+// Slices let you reference a contiguous sequence of elements in a collection rather than the whole collection. A slice is a kind of reference, so it does not have ownership.
+
+// 5.2 
+// println!("rect1 is {:?}", rect1);. Putting the specifier :? inside the curly brackets tells println! we want to use an output format called Debug
+// `{:?}` (or {:#?} for pretty-print)
+#[derive(Debug)] // Rust does include functionality to print out debugging information, but we have to explicitly opt in to make that functionality available for our struc
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+// Another way to print out a value using the Debug format is to use the dbg! macro, which takes ownership of an expression (as opposed to println!, which takes a reference), prints the file and line number of where that dbg! macro call occurs in your code along with the resultant value of that expression, and returns ownership of the value.
+// Note: Calling the dbg! macro prints to the standard error console stream (stderr), as opposed to println!, which prints to the standard output console stream (stdout).
+// 5.3
+// We chose &self here for the same reason we used &Rectangle in the function version: we don’t want to take ownership, and we just want to read the data in the struct, not write to it. If we wanted to change the instance that we’ve called the method on as part of what the method does, we’d use &mut self as the first parameter. Having a method that takes ownership of the instance by using just self as the first parameter is rare; this technique is usually used when the method transforms self into something else and you want to prevent the caller from using the original instance after the transformation.
+// The main reason for using methods instead of functions, in addition to providing method syntax and not having to repeat the type of self in every method’s signature, is for organization.
+// automatic referencing and dereferencing, the following are the same:
+// We can define associated functions that don’t have self as their first parameter (and thus are not methods)
+p1.distance(&p2);
+(&p1).distance(&p2);
+// We can define associated functions that don’t have self as their first parameter (and thus are not methods)
