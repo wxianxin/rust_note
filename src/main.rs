@@ -939,3 +939,92 @@ struct Rectangle {
 p1.distance(&p2);
 (&p1).distance(&p2);
 // We can define associated functions that don’t have self as their first parameter (and thus are not methods)
+
+
+// 7.1
+// A package can contain as many binary crates as you like, but at most only one library crate.
+// If a package contains src/main.rs and src/lib.rs, it has two crates: a binary and a library, both with the same name as the package. A package can have multiple binary crates by placing files in the src/bin directory: each file will be a separate binary crate.
+
+// 7.3
+// Our preference in general is to specify absolute paths because it’s more likely we’ll want to move code definitions and item calls independently of each other.
+//
+// https://rust-lang.github.io/api-guidelines/
+// If we use pub before a struct definition, we make the struct public, but the struct’s fields will still be private. We can make each field public or not on a case-by-case basis.
+// In contrast, if we make an enum public, all of its variants are then public.
+// Enums aren’t very useful unless their variants are public; it would be annoying to have to annotate all enum variants with pub in every case, so the default for enum variants is to be public.
+
+// 8
+// https://doc.rust-lang.org/std/collections/index.html
+// 8.1
+// https://doc.rust-lang.org/std/vec/struct.Vec.html
+
+// 8.2
+// String is actually implemented as a wrapper around a vector of bytes with some extra guarantees
+
+// 9.1
+// Debug symbols are enabled by default when using cargo build or cargo run without the --release flag, as we have here.
+// 9.2
+// We use expect in the same way as unwrap: to return the file handle or call the panic! macro.
+// A Shortcut for Propagating Errors: the ? Operator after a Result value (Return early Err/None)
+// The error message also mentioned that ? can be used with Option<T> values as well. To deal with `None`
+// Note that you can use the ? operator on a Result in a function that returns Result, and you can use the ? operator on an Option in a function that returns Option, but you can’t mix and match.
+
+// 9.3
+// returning Result is a good default choice when you’re defining a function that might fail.
+// unwrap and expect methods are very handy when prototyping, before you’re ready to decide how to handle errors
+// However, when failure is expected, it’s more appropriate to return a Result than to make a panic! call.
+
+// 10.3
+// Lifetimes on function or method parameters are called input lifetimes, and lifetimes on return values are called output lifetimes.
+
+// 11.1
+// Attributes are metadata about pieces of Rust code. To change a function into a test function, add #[test] on the line before fn.
+// The #[cfg(test)] annotation on the tests module tells Rust to compile and run the test code only when you run cargo test, not when you run cargo build.
+// 
+// adder
+// ├── Cargo.lock
+// ├── Cargo.toml
+// ├── src
+// │   └── lib.rs
+// └── tests
+//     └── integration_test.rs
+// 
+// cargo test -- --test-threads=1
+// cargo test -- --show-output
+// cargo test test_name
+// cargo test -- --ignored //  If we want to run only the ignored tests
+// cargo test -- --include-ignored
+
+
+
+// 12.1
+// cargo run -- searchstring example-filename.txt // two hyphens to indicate the following arguments are for our program rather than for cargo
+// 12.4
+// (Note that the backslash after the opening double quote tells Rust not to put a newline character at the beginning of the contents of this string literal)
+
+// 13.2
+// Note that we needed to make v1_iter mutable: calling the next method on an iterator changes internal state that the iterator uses to keep track of where it is in the sequence. In other words, this code consumes, or uses up, the iterator. Each call to next eats up an item from the iterator. We didn’t need to make v1_iter mutable when we used a for loop because the loop took ownership of v1_iter and made it mutable behind the scenes.
+// Also note that the values we get from the calls to next are immutable references to the values in the vector. The iter method produces an iterator over immutable references. If we want to create an iterator that takes ownership of v1 and returns owned values, we can call into_iter instead of iter. Similarly, if we want to iterate over mutable references, we can call iter_mut instead of iter.
+// Methods that call next are called consuming adaptors, because calling them uses up the iterator.
+// Iterator adaptors are methods defined on the Iterator trait that don’t consume the iterator. Instead, they produce different iterators by changing some aspect of the original iterator.
+
+// 15
+// Smart pointers, on the other hand, are data structures that act like a pointer but also have additional metadata and capabilities.
+// while references only borrow data, in many cases, smart pointers own the data they point to.
+// Smart pointers are usually implemented using structs. Unlike an ordinary struct, smart pointers implement the Deref and Drop traits. The Deref trait allows an instance of the smart pointer struct to behave like a reference so you can write your code to work with either references or smart pointers. The Drop trait allows you to customize the code that’s run when an instance of the smart pointer goes out of scope.
+// 15.3
+// Variables are dropped in the reverse order of their creation
+// 15.6
+// This chapter covered how to use smart pointers to make different guarantees and trade-offs from those Rust makes by default with regular references. The Box<T> type has a known size and points to data allocated on the heap. The Rc<T> type keeps track of the number of references to data on the heap so that data can have multiple owners. The RefCell<T> type with its interior mutability gives us a type that we can use when we need an immutable type but need to change an inner value of that type; it also enforces the borrowing rules at runtime instead of at compile time.
+// Also discussed were the Deref and Drop traits, which enable a lot of the functionality of smart pointers
+
+// 16.1
+// We can fix the problem of the spawned thread not running or ending prematurely by saving the return value of thread::spawn in a variable. The return type of thread::spawn is JoinHandle. A JoinHandle is an owned value that, when we call the join method on it, will wait for its thread to finish.
+// Calling join on the handle blocks the thread currently running until the thread represented by the handle terminates.
+// We'll often use the move keyword with closures passed to thread::spawn because the closure will then take ownership of the values it uses from the environment, thus transferring ownership of those values from one thread to another
+// 16.2
+// Using Message Passing to Transfer Data Between Threads
+// A channel has two halves: a transmitter and a receiver. A channel is said to be closed if either the transmitter or receiver half is dropped.
+// 16.4
+// The Send marker trait indicates that ownership of values of the type implementing Send can be transferred between threads.
+// The Sync marker trait indicates that it is safe for the type implementing Sync to be referenced from multiple threads. In other words, any type T is Sync if &T (an immutable reference to T) is Send, meaning the reference can be sent safely to another thread.
