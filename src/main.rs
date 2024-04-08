@@ -564,6 +564,10 @@ fn main() {
     // And call for each value with next
     println!("1st : {:?}", iter1.next());
 
+    fn count_iterator(map: &HashMap<String, Progress>, value: Progress) -> usize {
+        map.iter().fold(0, |acc, (_, v)| { if v == &value {acc + 1} else {acc}})
+    }
+
     //----------------------------------------------------------------------------------
     // closure
     // A closure is anonymous function and it is sometimes stored in a
