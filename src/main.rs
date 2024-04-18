@@ -907,7 +907,14 @@ trait Signed {
 // An impl block is always for a type, so, inside that block, `Self` means that type
 //
 // if is an expression
-/
+
+// if let expressions mainly as a shorter way to write the equivalent of a match that only matches one case
+// you can think of if let as syntax sugar for a match that runs code when the value matches one pattern and then ignores all other values.
+// example:
+if let Some(3) = some_u8_value {
+    println!("three");
+}
+
 // chapter 4
 // stack: LIFO, All data stored on the stack must have a known, fixed size. 
 // All data stored on the stack must have a known, fixed size.
