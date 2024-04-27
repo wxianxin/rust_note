@@ -1,3 +1,19 @@
+// Generic type trait and trait bound
+pub fn notify(item: &(impl Summary + Display)) {
+    ()
+}
+pub fn notify<T: Summary + Display>(item: &T) {
+    ()
+}
+pub fn notify<T>(item: &T) -> i32
+where T: Summary + Display
+{
+    1
+}
+// lifetime
+// We want the signature to express the following constraint: the returned reference will be valid as long as both the parameters are valid. This is the relationship between lifetimes of the parameters and the return value.
+
+
 // 20221002
 #![allow(unused)] // suppress warnings for unused variables
 
