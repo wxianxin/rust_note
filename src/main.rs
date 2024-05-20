@@ -1055,3 +1055,7 @@ p1.distance(&p2);
 // 16.4
 // The Send marker trait indicates that ownership of values of the type implementing Send can be transferred between threads.
 // The Sync marker trait indicates that it is safe for the type implementing Sync to be referenced from multiple threads. In other words, any type T is Sync if &T (an immutable reference to T) is Send, meaning the reference can be sent safely to another thread.
+
+
+// 20250519
+// Returns a Future: When you declare a function with  async fn, it automatically returns a  Future. This  Future represents the eventual result of the asynchronous operation. The actual execution of the function’s body doesn’t begin until the future is  awaited.
