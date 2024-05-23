@@ -1039,6 +1039,14 @@ p1.distance(&p2);
 // Smart pointers, on the other hand, are data structures that act like a pointer but also have additional metadata and capabilities.
 // while references only borrow data, in many cases, smart pointers own the data they point to.
 // Smart pointers are usually implemented using structs. Unlike an ordinary struct, smart pointers implement the Deref and Drop traits. The Deref trait allows an instance of the smart pointer struct to behave like a reference so you can write your code to work with either references or smart pointers. The Drop trait allows you to customize the code that’s run when an instance of the smart pointer goes out of scope.
+// 15.1
+// Boxes don’t have performance overhead, other than storing their data on the heap instead of on the stack.
+// cope with unknown data size
+// move ownership without copying
+fn main() {
+    let b = Box::new(5);
+    println!("b = {}", b);
+}
 // 15.3
 // Variables are dropped in the reverse order of their creation
 // 15.6
@@ -1052,10 +1060,70 @@ p1.distance(&p2);
 // 16.2
 // Using Message Passing to Transfer Data Between Threads
 // A channel has two halves: a transmitter and a receiver. A channel is said to be closed if either the transmitter or receiver half is dropped.
+use std::sync::mpsc;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    let tx1 = tx.clone();
+    thread::spawn(move || {
+        let vals = vec![
+            String::from("hi"),
+            String::from("from"),
+            String::from("the"),
+            String::from("thread"),
+        ];
+
+        for val in vals {
+            tx1.send(val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
+
+    thread::spawn(move || {
+        let vals = vec![
+            String::from("more"),
+            String::from("messages"),
+            String::from("for"),
+            String::from("you"),
+        ];
+
+        for val in vals {
+            tx.send(val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
+
+    for received in rx {
+        println!("Got: {}", received);
+    }
+// 16.3 Shared-State Concurrency
+use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let counter = Arc::clone(&counter);
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+
+            *num += 1;
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {}", *counter.lock().unwrap());
+}
 // 16.4
 // The Send marker trait indicates that ownership of values of the type implementing Send can be transferred between threads.
 // The Sync marker trait indicates that it is safe for the type implementing Sync to be referenced from multiple threads. In other words, any type T is Sync if &T (an immutable reference to T) is Send, meaning the reference can be sent safely to another thread.
-
 
 // 20250519
 // Returns a Future: When you declare a function with  async fn, it automatically returns a  Future. This  Future represents the eventual result of the asynchronous operation. The actual execution of the function’s body doesn’t begin until the future is  awaited.
